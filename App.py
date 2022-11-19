@@ -1,6 +1,7 @@
+import numpy as np
+from numpy.linalg import inv
 from tkinter import *
 import tkinter as tk
-import base64
 from turtle import width
 
 class welcomePage(tk.Frame):
@@ -8,10 +9,10 @@ class welcomePage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.configure(bg='gray19')
 
-        welcome = tk.Label(self, text =('welcome'),font=("Bangna New",60),fg='white',bg='gray19').place(x=285, y = 110)
+        welcome = tk.Label(self, text =('welcome'),font=("Bangna New",60),fg='white',bg='gray19').place(x=285, y = 110) #gray19 #white
         to_en_de = tk.Label(self,font = ('Bangna New',20), text ='to Encrypting - Decrypting message',fg='white',bg='gray19').place(x=220, y = 210)
 
-        Button = tk.Button(self,font = ('Bangna New',20), text="Let's start!",bg='gray8',fg='black',width=15, command=lambda: controller.show_frame(firstPage))
+        Button = tk.Button(self,font = ('Bangna New',20), text="Let's start!",bg='white',fg='black',width=15, command=lambda: controller.show_frame(firstPage))
         Button.place(x=295, y=280)
 
 class firstPage(tk.Frame):
@@ -23,13 +24,13 @@ class firstPage(tk.Frame):
         self.configure(bg='gray19')
 
         Button = tk.Button(self, text="en-code", font=("Bangna New", 40), command=lambda: controller.show_frame(encodePage))
-        Button.place(x=190, y=180)
+        Button.place(x=300, y=50)
 
         Button = tk.Button(self, text="de-code", font=("Bangna New", 40), command=lambda: controller.show_frame(decodePage))
-        Button.place(x=450, y=180)
+        Button.place(x=300, y=200)
 
-        exit = tk.Button(self, font = ('Bangna New',30),text= 'EXIT' , width = 10, command = Exit)
-        exit.place(x=310,y=290)
+        exit = tk.Button(self, font = ('Bangna New',30),text= 'EXIT',bg='Red' , width = 5, command = Exit)
+        exit.place(x=350,y=350)
 
 class encodePage(tk.Frame):
 
@@ -38,7 +39,7 @@ class encodePage(tk.Frame):
         self.configure(bg='gray19')
 
         Text = StringVar()
-        # private_key = StringVar()
+         #private_key = StringVar()
         private_key0 = StringVar()
         private_key1 = StringVar()
         private_key2 = StringVar()
@@ -48,20 +49,43 @@ class encodePage(tk.Frame):
         private_key6 = StringVar()
         private_key7 = StringVar()
         private_key8 = StringVar()
-        private_key = private_key0.get() +private_key1.get()+private_key2.get()+private_key3.get()+private_key4.get()+private_key5.get()+private_key6.get()+private_key7.get()+private_key8.get()
+        #private_key = private_key0.get() +private_key1.get()+private_key2.get()+private_key3.get()+private_key4.get()+private_key5.get()+private_key6.get()+private_key7.get()+private_key8.get()
+        
+        #print("key : ",private_key)
         mode = StringVar()
         Result = StringVar()
-
+        
+        
         def Encode(key,message):
-            enc=[]
-
-            for i in range(len(message)):
-                key_c = key[i % len(key)]
-                enc.append(chr((ord(message[i]+32) + ord(key_c)) % 128))
-            return base64.urlsafe_b64encode("".join(enc).encode()).decode()
+            for i in range(len(key)):
+                try:
+                    key[i]=int(key[i])
+                except:
+                    key[i]=0
+            matrix_key = np.reshape(key, (3, 3))
+            print(matrix_key)
+            matrix_msg=[]
+            print(matrix_msg)
+            for i in message:
+                matrix_msg.append(ord(i)-32)
+            while len(matrix_msg)%3>0:
+                matrix_msg.append(0)
+            matrix_msg= np.reshape(matrix_msg,(3,len(matrix_msg)//3))
+            print(matrix_msg)
+            ans=np.matmul(matrix_msg,matrix_key)
+            print(ans)
+            print(len(ans))
+            ans=np.reshape(ans,(1,len(ans)*len(ans[0])))
+            word=""
+            for i in ans[0]:
+                word+=chr(i%95+32)
+            return word
 
         def Mode():
-            Result.set(Encode(private_key.get(), Text.get()))
+            #Result.set(Encode(private_key0.get(),private_key1.get(),private_key2.get(),private_key3.get(),private_key4.get(),private_key5.get(),private_key6.get(),private_key7.get(),private_key8.get(), Text.get()))
+            #Result.set(Encode(private_key0.get(), Text.get()))
+            private_key = [private_key0.get() ,private_key1.get(),private_key2.get(),private_key3.get(),private_key4.get(),private_key5.get(),private_key6.get(),private_key7.get(),private_key8.get()]  
+            Result.set(Encode(private_key,Text.get()))
                 
         def Exit():
             self.quit()
@@ -80,6 +104,9 @@ class encodePage(tk.Frame):
             private_key8.set("")
             mode.set("")
             Result.set("")
+        
+        # private_key = private_key0.get() +private_key1.get()+private_key2.get()+private_key3.get()+private_key4.get()+private_key5.get()+private_key6.get()+private_key7.get()+private_key8.get()
+        # print("key : ",private_key)
 
         Label(self,font=('Bangena new',20),text='En - code Page',fg='white',bg='gray19').place(x=350,y=60)
 
@@ -99,17 +126,21 @@ class encodePage(tk.Frame):
         Entry(self, font = ('Bangena new',20), textvariable = private_key6 ,fg='Black', bg ='CadetBlue1').place(x=580, y = 190,height=40,width = 50)
         Entry(self, font = ('Bangena new',20), textvariable = private_key7 ,fg='Black', bg ='CadetBlue1').place(x=635, y = 190,height=40,width = 50)
         Entry(self, font = ('Bangena new',20), textvariable = private_key8 ,fg='Black', bg ='CadetBlue1').place(x=690, y = 190,height=40,width = 50)
-
+        
+        #private_key = private_key0 + private_key1 + private_key2+private_key3+private_key4+private_key5+private_key6+private_key7+private_key8
         Entry(self, font = ('Bangena new',20), textvariable = Result, bg ='CadetBlue1',fg='black').place(x=240, y = 375 , height = 40, width = 330)
+        #Entry(self, font = ('Bangena new',20), textvariable = private_key0, bg ='CadetBlue1',fg='black').place(x=240, y = 375 , height = 40, width = 330)
+        print("key0 :",private_key0)
 
         Button(self, font = ('Bangena new',20), text = 'ENCODE'  ,padx =2,bg ='LightGray' ,command = Mode).place(x=260, y = 260)
 
         Button(self, font = ('Bangena new',20) ,text ='RESET' ,width =6, command = Reset,bg = 'LimeGreen', padx=2).place(x=450, y = 260)
 
-        Button(self, font = ('Bangena new',15),text= 'EXIT' , width = 6, command = Exit,bg = 'OrangeRed', padx=2, pady=2).place(x=640, y = 450)
+        Button(self, font = ('Bangena new',15),text= 'EXIT' , width = 6, command = Exit,bg = 'OrangeRed', padx=2, pady=2).place(x=70, y=450)
+        print("Key 0 : ",private_key0)
 
         Buttona = tk.Button(self, text="HOME", font=('Bangena new',15), padx=2, pady=2, command=lambda: controller.show_frame(firstPage))
-        Buttona.place(x=70, y=450)
+        Buttona.place(x=640, y = 450)
 
 
 
@@ -130,31 +161,50 @@ class decodePage(tk.Frame):
         private_key6 = StringVar()
         private_key7 = StringVar()
         private_key8 = StringVar()
-        print("get : ",private_key0)
-        print("get : ",private_key1)
-        print("get : ",private_key2)
-        print("get : ",private_key3)
-        print("get : ",private_key4)
-        print("get : ",private_key5)
-        print("get : ",private_key6)
-        print("get : ",private_key7)
-        print("get : ",private_key8)
-        private_key = private_key0.get() +private_key1.get()+private_key2.get()+private_key3.get()+private_key4.get()+private_key5.get()+private_key6.get()+private_key7.get()+private_key8.get()
-        print("get : ",private_key)
         mode = StringVar()
         Result = StringVar()
 
         def Decode(key,message):
-            dec=[]
-            message = base64.urlsafe_b64decode(message).decode()
-
-            for i in range(len(message)):
-                key_c = key[i % len(key)]
-                dec.append(chr((256 + ord(message[i])- ord(key_c)) % 256))
-            return "".join(dec)
+            for i in range(len(key)):
+                try:
+                    key[i]=int(key[i])
+                except:
+                    key[i]=0
+            matrix_key = np.reshape(key, (3, 3))
+            determinant = np.linalg.det(matrix_key)
+            cofactor = np.linalg.inv(matrix_key).T * determinant        
+            matrix_key = cofactor.T
+            print(matrix_key)
+            
+            
+            temp=1
+            while int((determinant*temp))%95!=1:
+                temp+=1
+                if temp >94:
+                    break
+            for i in range(len(matrix_key)) :
+                for k in range(len(matrix_key[i])):
+                    matrix_key[i][k]=matrix_key[i][k]*temp%95
+            print(matrix_key)
+            matrix_msg=[]
+            for i in message:
+                matrix_msg.append(ord(i)-32)
+            while len(matrix_msg)%3>0:
+                matrix_msg.append(0)
+            matrix_msg= np.reshape(matrix_msg,(3,len(matrix_msg)//3))
+            ans=np.matmul(matrix_msg,matrix_key)
+            ans=np.reshape(ans,(1,len(ans)*len(ans[0])))
+            
+            word=""
+            for i in ans[0]:
+                i=int(round(i, 0))
+                word+=chr(i%95+32)
+                print(i%95+32)
+            return word
 
         def Mode():
-            Result.set(Decode(private_key.get(), Text.get()))
+            private_key = [private_key0.get() ,private_key1.get(),private_key2.get(),private_key3.get(),private_key4.get(),private_key5.get(),private_key6.get(),private_key7.get(),private_key8.get()]  
+            Result.set(Decode(private_key,Text.get()))
 
         def Exit():
             self.quit()
@@ -199,10 +249,10 @@ class decodePage(tk.Frame):
 
         Button(self, font = ('Bangena new',20) ,text ='RESET' ,width =6, command = Reset,bg = 'LimeGreen', padx=2).place(x=450, y = 260)
 
-        Button(self, font = ('Bangena new',15),text= 'EXIT' , width = 6, command = Exit,bg = 'OrangeRed', padx=2, pady=2).place(x=640, y = 450)
+        Button(self, font = ('Bangena new',15),text= 'EXIT' , width = 6, command = Exit,bg = 'OrangeRed', padx=2, pady=2).place(x=70, y=450)
 
         Buttona = tk.Button(self, text="HOME", font=('Bangena new',15), padx=2, pady=2, command=lambda: controller.show_frame(firstPage))
-        Buttona.place(x=70, y=450)
+        Buttona.place(x=640, y = 450)
 
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
