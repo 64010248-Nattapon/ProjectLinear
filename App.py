@@ -59,7 +59,10 @@ class encodePage(tk.Frame):
                 except:
                     key[i]=0
             matrix_key = np.reshape(key, (3, 3))
-            print(matrix_key)
+            
+            if checkinverse(matrix_key):
+                return ""
+        
             
                 
                 
@@ -82,15 +85,31 @@ class encodePage(tk.Frame):
             return word
         
         def checkinverse(matrix_key):
-            inverse=np.linalg.inv(matrix_key)
-            if inverse:
-                return Label(self,font=('Bangena new',12),text='',fg='red',bg='gray19').place(x=240,y=420)
-            else:
-                return Label(self,font=('Bangena new',12),text='This key cannot be inverse, please enter a new key.',fg='red',bg='gray19').place(x=240,y=420)
-            
-        Label(self,font=('Bangena new',12),text='This key cannot be inverse, please enter a new key.',fg='red',bg='gray19').place(x=240,y=420)
-
+            determinant = np.linalg.det(matrix_key)
+            print(determinant)
+            if determinant !=0 :
+                error.pack(pady=20)
+                error.pack_forget()
+                return False
+            else :
+                error.pack()
+                error.place(x=240,y=420)
+                return True
+        
+        def checkinput():
+            if private_key0.get()=="" or private_key1.get()=="" or private_key2.get()=="" or private_key3.get()=="" or private_key4.get()=="" or private_key5.get()=="" or private_key6.get()=="" or private_key7.get()=="" or private_key8.get()=="" or Text.get()=="" :
+                inputerror.pack()
+                inputerror.place(x=240,y=420)
+                return True
+            else :
+                inputerror.pack(pady=20)
+                inputerror.pack_forget()
+                return False
+                
         def Mode():
+            if checkinput() :
+                Result.set("")
+                return
             private_key = [private_key0.get() ,private_key1.get(),private_key2.get(),private_key3.get(),private_key4.get(),private_key5.get(),private_key6.get(),private_key7.get(),private_key8.get()]  
             Result.set(Encode(private_key,Text.get()))
                 
@@ -110,8 +129,21 @@ class encodePage(tk.Frame):
             private_key8.set("")
             mode.set("")
             Result.set("")
+            inputerror.pack(pady=20)
+            inputerror.pack_forget()
+            error.pack()
+            error.place(x=240,y=420)
         
         
+        error=tk.Label(self,font=('Bangena new',12),text='This key cannot be inverse, please enter a new key.',fg='red',bg='gray19')
+        error.place(x=240,y=420)
+        error.pack(pady=20)
+        error.pack_forget()
+
+        inputerror=tk.Label(self,font=('Bangena new',12),text='MESSAGE or KEY you entered is incorrect',fg='red',bg='gray19')
+        inputerror.place(x=240,y=420)
+        inputerror.pack(pady=20)
+        inputerror.pack_forget()
 
         Label(self,font=('Bangena new',20),text='En - code Page',fg='white',bg='gray19').place(x=350,y=60)
 
@@ -208,7 +240,20 @@ class decodePage(tk.Frame):
                 print(i%95+32)
             return word
 
+        def checkinput():
+            if private_key0.get()=="" or private_key1.get()=="" or private_key2.get()=="" or private_key3.get()=="" or private_key4.get()=="" or private_key5.get()=="" or private_key6.get()=="" or private_key7.get()=="" or private_key8.get()=="" or Text.get()=="" :
+                inputerror.pack()
+                inputerror.place(x=240,y=420)
+                return True
+            else :
+                inputerror.pack(pady=20)
+                inputerror.pack_forget()
+                return False
+
         def Mode():
+            if checkinput() :
+                Result.set("")
+                return
             private_key = [private_key0.get() ,private_key1.get(),private_key2.get(),private_key3.get(),private_key4.get(),private_key5.get(),private_key6.get(),private_key7.get(),private_key8.get()]  
             Result.set(Decode(private_key,Text.get()))
 
@@ -228,7 +273,11 @@ class decodePage(tk.Frame):
             private_key8.set("")
             mode.set("")
             Result.set("")
-    
+
+        inputerror=tk.Label(self,font=('Bangena new',12),text='MESSAGE or KEY you entered is incorrect',fg='red',bg='gray19')
+        inputerror.place(x=240,y=420)
+        inputerror.pack(pady=20)
+        inputerror.pack_forget()
         Label(self,font=('Bangena new',20),text='De - code Page',fg='white',bg='gray19').place(x=350,y=60)
 
         Label(self,font=('Bangena new',20),text='RESULT',fg='white',bg='gray19').place(x=150,y=320)
