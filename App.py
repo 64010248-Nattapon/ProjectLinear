@@ -14,7 +14,7 @@ class welcomePage(tk.Frame):
 
         Button = tk.Button(self,font = ('Bangna New',20), text="Let's start!",bg='white',fg='black',width=15, command=lambda: controller.show_frame(firstPage))
         Button.place(x=295, y=280)
-
+        
 class firstPage(tk.Frame):
     def __init__(self, parent, controller):
         def Exit():
@@ -23,10 +23,10 @@ class firstPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.configure(bg='gray19')
 
-        Button = tk.Button(self, text="en-code", font=("Bangna New", 40), command=lambda: controller.show_frame(encodePage))
+        Button = tk.Button(self, text="en-code",bg='darkgrey' , font=("Bangna New", 40), command=lambda: controller.show_frame(encodePage))
         Button.place(x=300, y=50)
 
-        Button = tk.Button(self, text="de-code", font=("Bangna New", 40), command=lambda: controller.show_frame(decodePage))
+        Button = tk.Button(self, text="de-code",bg='darkgrey' , font=("Bangna New", 40), command=lambda: controller.show_frame(decodePage))
         Button.place(x=300, y=200)
 
         exit = tk.Button(self, font = ('Bangna New',30),text= 'EXIT',bg='Red' , width = 5, command = Exit)
@@ -39,7 +39,6 @@ class encodePage(tk.Frame):
         self.configure(bg='gray19')
 
         Text = StringVar()
-         #private_key = StringVar()
         private_key0 = StringVar()
         private_key1 = StringVar()
         private_key2 = StringVar()
@@ -49,9 +48,6 @@ class encodePage(tk.Frame):
         private_key6 = StringVar()
         private_key7 = StringVar()
         private_key8 = StringVar()
-        #private_key = private_key0.get() +private_key1.get()+private_key2.get()+private_key3.get()+private_key4.get()+private_key5.get()+private_key6.get()+private_key7.get()+private_key8.get()
-        
-        #print("key : ",private_key)
         mode = StringVar()
         Result = StringVar()
         
@@ -64,6 +60,10 @@ class encodePage(tk.Frame):
                     key[i]=0
             matrix_key = np.reshape(key, (3, 3))
             print(matrix_key)
+            
+                
+                
+            
             matrix_msg=[]
             print(matrix_msg)
             for i in message:
@@ -72,7 +72,7 @@ class encodePage(tk.Frame):
                 matrix_msg.append(0)
             matrix_msg= np.reshape(matrix_msg,(3,len(matrix_msg)//3))
             print(matrix_msg)
-            ans=np.matmul(matrix_msg,matrix_key)
+            ans=np.matmul(matrix_key,matrix_msg)
             print(ans)
             print(len(ans))
             ans=np.reshape(ans,(1,len(ans)*len(ans[0])))
@@ -80,10 +80,17 @@ class encodePage(tk.Frame):
             for i in ans[0]:
                 word+=chr(i%95+32)
             return word
+        
+        def checkinverse(matrix_key):
+            inverse=np.linalg.inv(matrix_key)
+            if inverse:
+                return Label(self,font=('Bangena new',12),text='',fg='red',bg='gray19').place(x=240,y=420)
+            else:
+                return Label(self,font=('Bangena new',12),text='This key cannot be inverse, please enter a new key.',fg='red',bg='gray19').place(x=240,y=420)
+            
+        Label(self,font=('Bangena new',12),text='This key cannot be inverse, please enter a new key.',fg='red',bg='gray19').place(x=240,y=420)
 
         def Mode():
-            #Result.set(Encode(private_key0.get(),private_key1.get(),private_key2.get(),private_key3.get(),private_key4.get(),private_key5.get(),private_key6.get(),private_key7.get(),private_key8.get(), Text.get()))
-            #Result.set(Encode(private_key0.get(), Text.get()))
             private_key = [private_key0.get() ,private_key1.get(),private_key2.get(),private_key3.get(),private_key4.get(),private_key5.get(),private_key6.get(),private_key7.get(),private_key8.get()]  
             Result.set(Encode(private_key,Text.get()))
                 
@@ -92,7 +99,6 @@ class encodePage(tk.Frame):
 
         def Reset():
             Text.set("")
-            # private_key.set("")
             private_key0.set("")
             private_key1.set("")
             private_key2.set("")
@@ -105,18 +111,18 @@ class encodePage(tk.Frame):
             mode.set("")
             Result.set("")
         
-        # private_key = private_key0.get() +private_key1.get()+private_key2.get()+private_key3.get()+private_key4.get()+private_key5.get()+private_key6.get()+private_key7.get()+private_key8.get()
-        # print("key : ",private_key)
+        
 
         Label(self,font=('Bangena new',20),text='En - code Page',fg='white',bg='gray19').place(x=350,y=60)
 
         Label(self,font=('Bangena new',20),text='RESULT',fg='white',bg='gray19').place(x=150,y=320)
+        
+        # Label(self,font=('Bangena new',12),text='This key cannot be inverse, please enter a new key.',fg='red',bg='gray19').place(x=240,y=420)
 
         Label(self, font= ('Bangena new',25), text='MESSAGE : ',fg='white',bg='gray19').place(x= 150,y=130)
         Entry(self, font = ('Bangena new',20), textvariable = Text,fg='Black', bg = 'CadetBlue1').place(x=350, y = 130,height = 40,width = 330)
 
         Label(self, font = ('Bangena new',25), text ='KEY : ',fg='white',bg='gray19').place(x=150, y = 190)
-        # Entry(self, font = ('Bangena new',20), textvariable = private_key ,fg='Black', bg ='CadetBlue1').place(x=250, y = 190,height=40,width = 50)
         Entry(self, font = ('Bangena new',20), textvariable = private_key0 ,fg='Black', bg ='CadetBlue1').place(x=250, y = 190,height=40,width = 50)
         Entry(self, font = ('Bangena new',20), textvariable = private_key1 ,fg='Black', bg ='CadetBlue1').place(x=305, y = 190,height=40,width = 50)
         Entry(self, font = ('Bangena new',20), textvariable = private_key2 ,fg='Black', bg ='CadetBlue1').place(x=360, y = 190,height=40,width = 50)
@@ -127,10 +133,8 @@ class encodePage(tk.Frame):
         Entry(self, font = ('Bangena new',20), textvariable = private_key7 ,fg='Black', bg ='CadetBlue1').place(x=635, y = 190,height=40,width = 50)
         Entry(self, font = ('Bangena new',20), textvariable = private_key8 ,fg='Black', bg ='CadetBlue1').place(x=690, y = 190,height=40,width = 50)
         
-        #private_key = private_key0 + private_key1 + private_key2+private_key3+private_key4+private_key5+private_key6+private_key7+private_key8
         Entry(self, font = ('Bangena new',20), textvariable = Result, bg ='CadetBlue1',fg='black').place(x=240, y = 375 , height = 40, width = 330)
-        #Entry(self, font = ('Bangena new',20), textvariable = private_key0, bg ='CadetBlue1',fg='black').place(x=240, y = 375 , height = 40, width = 330)
-        print("key0 :",private_key0)
+
 
         Button(self, font = ('Bangena new',20), text = 'ENCODE'  ,padx =2,bg ='LightGray' ,command = Mode).place(x=260, y = 260)
 
@@ -151,7 +155,6 @@ class decodePage(tk.Frame):
         self.configure(bg='gray19')
 
         Text = StringVar()
-        # private_key = StringVar()
         private_key0 = StringVar()
         private_key1 = StringVar()
         private_key2 = StringVar()
@@ -192,10 +195,13 @@ class decodePage(tk.Frame):
             while len(matrix_msg)%3>0:
                 matrix_msg.append(0)
             matrix_msg= np.reshape(matrix_msg,(3,len(matrix_msg)//3))
-            ans=np.matmul(matrix_msg,matrix_key)
+            ans=np.matmul(matrix_key,matrix_msg)
             ans=np.reshape(ans,(1,len(ans)*len(ans[0])))
+            print(matrix_msg)
+            print(ans)
             
             word=""
+            
             for i in ans[0]:
                 i=int(round(i, 0))
                 word+=chr(i%95+32)
@@ -211,7 +217,6 @@ class decodePage(tk.Frame):
 
         def Reset():
             Text.set("")
-            # private_key.set("")
             private_key0.set("")
             private_key1.set("")
             private_key2.set("")
@@ -232,7 +237,6 @@ class decodePage(tk.Frame):
         Entry(self, font = ('Bangena new',20), textvariable = Text,fg='Black', bg = 'CadetBlue1').place(x=350, y = 130,height = 40,width = 330)
 
         Label(self, font = ('Bangena new',25), text ='KEY : ',fg='white',bg='gray19').place(x=150, y = 190)
-        # Entry(self, font = ('Bangena new',20), textvariable = private_key ,fg='Black', bg ='CadetBlue1').place(x=330, y = 190,height=40,width = 330)
         Entry(self, font = ('Bangena new',20), textvariable = private_key0 ,fg='Black', bg ='CadetBlue1').place(x=250, y = 190,height=40,width = 50)
         Entry(self, font = ('Bangena new',20), textvariable = private_key1 ,fg='Black', bg ='CadetBlue1').place(x=305, y = 190,height=40,width = 50)
         Entry(self, font = ('Bangena new',20), textvariable = private_key2 ,fg='Black', bg ='CadetBlue1').place(x=360, y = 190,height=40,width = 50)
@@ -280,4 +284,7 @@ class Application(tk.Tk):
 
 app = Application()
 app.maxsize(1000, 800)
+# width= app.winfo_screenwidth()
+# height= app.winfo_screenheight()
+# app.geometry("%dx%d" % (width, height))
 app.mainloop()
